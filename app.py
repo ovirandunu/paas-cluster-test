@@ -6,8 +6,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Path for persistent storage (can be mounted to PVC in k8s)
-# Use /data for k8s deployments, or ./data for local development
-DATA_DIR = os.getenv('DATA_DIR', './data')
+DATA_DIR = os.getenv('DATA_DIR', '/data')
 DATA_FILE = os.path.join(DATA_DIR, 'app_data.json')
 
 def ensure_data_dir():
@@ -146,7 +145,7 @@ def hello_world():
     </head>
     <body>
         <div class="container">
-            <h1>🚀 PaaS Cluster Test Application</h1>
+            <h1>PaaS Cluster Test Application</h1>
             
             <div class="section">
                 <div class="label">Environment Variable (TEST_ENV_VAR):</div>
@@ -161,7 +160,7 @@ def hello_world():
                         <input type="text" name="message" class="message-input" 
                                placeholder="Enter a message to test PVC persistence..." 
                                value="{user_message}" maxlength="500">
-                        <button type="submit" class="submit-btn">💾 Save Message</button>
+                        <button type="submit" class="submit-btn">Save Message</button>
                     </form>
                     <small style="color: #666;">This message will persist across pod restarts when using PVC</small>
                 </div>
