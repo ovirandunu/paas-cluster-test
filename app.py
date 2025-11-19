@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, redirect, url_for
 import os
 import json
 from datetime import datetime
@@ -43,7 +43,8 @@ def initialize_data():
         initial_data = {
             "first_started": datetime.now().isoformat(),
             "restart_count": 1,
-            "last_restart": datetime.now().isoformat()
+            "last_restart": datetime.now().isoformat(),
+            "user_message": ""
         }
         write_persisted_data(initial_data)
     else:
@@ -53,6 +54,9 @@ def initialize_data():
         else:
             existing_data["restart_count"] = 1
         existing_data["last_restart"] = datetime.now().isoformat()
+        # Ensure user_message exists
+        if "user_message" not in existing_data:
+            existing_data["user_message"] = ""
         write_persisted_data(existing_data)
 
 @app.route('/')
@@ -62,6 +66,7 @@ def hello_world():
     
     # Read persisted data
     persisted_data = read_persisted_data()
+    user_message = persisted_data.get("user_message", "") if persisted_data else ""
     
     # Build HTML response
     html = f"""
@@ -106,6 +111,37 @@ def hello_world():
                 border-radius: 5px;
                 overflow-x: auto;
             }}
+            .message-form {{
+                margin-top: 15px;
+            }}
+            .message-input {{
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                box-sizing: border-box;
+                margin-bottom: 10px;
+            }}
+            .submit-btn {{
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+            }}
+            .submit-btn:hover {{
+                background-color: #45a049;
+            }}
+            .current-message {{
+                background-color: #e8f5e9;
+                padding: 10px;
+                border-radius: 4px;
+                margin-top: 10px;
+                word-wrap: break-word;
+            }}
         </style>
     </head>
     <body>
@@ -115,6 +151,20 @@ def hello_world():
             <div class="section">
                 <div class="label">Environment Variable (TEST_ENV_VAR):</div>
                 <div class="value">{test_env_var}</div>
+            </div>
+            
+            <div class="section">
+                <div class="label">User Message (Persistent Storage Test):</div>
+                <div class="value">
+                    {f'<div class="current-message"><strong>Current Message:</strong> {user_message}</div>' if user_message else '<div class="current-message"><em>No message set yet</em></div>'}
+                    <form method="POST" action="/update-message" class="message-form">
+                        <input type="text" name="message" class="message-input" 
+                               placeholder="Enter a message to test PVC persistence..." 
+                               value="{user_message}" maxlength="500">
+                        <button type="submit" class="submit-btn">💾 Save Message</button>
+                    </form>
+                    <small style="color: #666;">This message will persist across pod restarts when using PVC</small>
+                </div>
             </div>
             
             <div class="section">
@@ -133,6 +183,22 @@ def hello_world():
     </html>
     """
     return html
+
+@app.route('/update-message', methods=['POST'])
+def update_message():
+    """Handle message update from the form"""
+    message = request.form.get('message', '').strip()
+    
+    # Read current data
+    persisted_data = read_persisted_data()
+    if persisted_data:
+        # Update the message
+        persisted_data["user_message"] = message
+        persisted_data["message_updated"] = datetime.now().isoformat()
+        write_persisted_data(persisted_data)
+    
+    # Redirect back to home page
+    return redirect(url_for('hello_world'))
 
 if __name__ == '__main__':
     # Initialize data on startup
