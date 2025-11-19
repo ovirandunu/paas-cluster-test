@@ -72,7 +72,7 @@ def hello_world():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>PaaS Cluster Test App</title>
+        <title>PVC-ENV-TEST</title>
         <style>
             body {{
                 font-family: Arial, sans-serif;
@@ -145,7 +145,7 @@ def hello_world():
     </head>
     <body>
         <div class="container">
-            <h1>PaaS Cluster Test Application</h1>
+            <h1>PVC-ENV-TEST</h1>
             
             <div class="section">
                 <div class="label">Environment Variable (TEST_ENV_VAR):</div>
