@@ -23,6 +23,9 @@ wheels/
 .installed.cfg
 *.egg
 
+# Data directory for local testing
+data/
+
 # IDE
 .vscode/
 .idea/
