@@ -145,7 +145,7 @@ def hello_world():
     </head>
     <body>
         <div class="container">
-            <h1>Migara-Gay-nigga-v1</h1>
+            <h1>Migara-Gay-nigga-v2</h1>
             
             <div class="section">
                 <div class="label">Environment Variable (TEST_ENV_VAR):</div>
