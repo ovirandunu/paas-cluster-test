@@ -72,7 +72,7 @@ def hello_world():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>PVC-ENV-TEST-nigga</title>
+        <title>PVC-ENV-TEST-niggas</title>
         <style>
             body {{
                 font-family: Arial, sans-serif;
